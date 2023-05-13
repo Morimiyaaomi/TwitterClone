@@ -1,0 +1,21 @@
+{
+	"folders": [
+		{
+			"path": "../../HTML"
+		},
+		{
+			"path": "../../JavaScript"
+		},
+		{
+			"path": "../../PHP"
+		},
+		{
+			"path": ".."
+		}
+	],
+	"extensions": {
+		"recommendations": [
+			"bmewburn.vscode-intelephense-client"
+		]
+	}
+}
