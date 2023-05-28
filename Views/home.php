@@ -40,7 +40,7 @@ $view_tweets = [
 //////////////////////////////////////
 
 /**
- * 画像ファイル名から画像URLを生成する
+ * 画像ファイル名から画像のURLを生成する
  * 
  * @param string $name 画像ファイル名
  * @param string $type user | tweet
@@ -82,13 +82,13 @@ function convertToDayTimeAgo(string $datetime)
   } else {
 
     if (date('Y') !== date('Y', $unix)) {
-    $time = date('Y年n月j日', $unix);
-    //現在の年と投稿日時が違う場合は年月日を返す
-  } else {
-    $time = date('n月j日', $unix);
-    //同じ場合は月と日にちを返す
-  }
-  return $time;
+      $time = date('Y年n月j日', $unix);
+      //現在の年と投稿日時が違う場合は年月日を返す
+    } else {
+      $time = date('n月j日', $unix);
+      //同じ場合は月と日にちを返す
+    }
+    return $time;
   }
 
   return (int)$time . $unit; //カタキャスト:int:intで表せない値は0,小数点以下は切捨て
@@ -106,6 +106,12 @@ function convertToDayTimeAgo(string $datetime)
   <!-- Bootstrap CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
   <link rel="stylesheet" href="<?php echo HOME_URL; ?>Views/css/style.css">
+  <!-- JS -->
+  <script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous" defer></script>
+  <!-- JavaScript Bundle with Popper -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous" defer></script>
+  <!-- いいね！js -->
+  <script src="<?php echo HOME_URL; ?>Views/js/likes.js" defer></script>
 
   <title>ホーム画面 / Twitterクローン</title>
   <meta name="description" content="ホーム画面です">
@@ -122,7 +128,7 @@ function convertToDayTimeAgo(string $datetime)
           <li class="nav-item"><a href="notification.php" class="nav-link"><img src="<?php echo HOME_URL; ?>Views/img/icon-notification.svg" alt=""></a></li>
           <li class="nav-item"><a href="profile.php" class="nav-link"><img src="<?php echo HOME_URL; ?>Views/img/icon-profile.svg" alt=""></a></li>
           <li class="nav-item"><a href="post.php" class="nav-link"><img src="<?php echo HOME_URL; ?>Views/img/icon-post-tweet-twitterblue.svg" alt="" class="post-tweet"></a></li>
-          <li class="nav-item my-icon"><img src="<?php echo HOME_URL; ?>Views/img_uploaded/user/sample-person.jpg" alt=""></li>
+          <li class="nav-item my-icon"><img src="<?php echo HOME_URL; ?>Views/img_uploaded/user/sample-person.jpg" alt="" class="js-popover" data-bs-container="body" data-bs-toggle="popover" data-bs-placement="right" data-bs-html="true" data-bs-content="<a href='profile.php'>プロフィール</a><br><a href='sign-out.php'>ログアウト<a/>"></li>
         </ul>
       </div>
     </div>
@@ -149,14 +155,14 @@ function convertToDayTimeAgo(string $datetime)
         </div>
       </div>
 
-        <!-- 仕切りエリア -->
-        <div class="ditch"></div>
+      <!-- 仕切りエリア -->
+      <div class="ditch"></div>
 
-        <!-- つぶやき一覧エリア -->
-        <?php if (empty($view_tweets)) : ?>
-          <p class="p-3">ツイートがありません</p>
-        <?php else : ?>
-          <div class="tweet-list">
+      <!-- つぶやき一覧エリア -->
+      <?php if (empty($view_tweets)) : ?>
+        <p class="p-3">ツイートがありません</p>
+      <?php else : ?>
+        <div class="tweet-list">
           <?php foreach ($view_tweets as $view_tweet) : ?>
             <div class="tweet">
               <div class="user">
@@ -174,31 +180,36 @@ function convertToDayTimeAgo(string $datetime)
                 <p><?php echo htmlspecialchars($view_tweet['tweet_body']); ?></p>
                 <!-- 画像ファイルがある時はimgタグを表示 -->
                 <?php if (isset($view_tweet['tweet_image_name'])) : ?>
-                    <img src="<?php echo buildImagePath($view_tweet['tweet_image_name'], 'tweet'); ?>" alt="" class="post-image">
+                  <img src="<?php echo buildImagePath($view_tweet['tweet_image_name'], 'tweet'); ?>" alt="" class="post-image">
                 <?php endif; ?>
 
                 <div class="icon-list">
-                  <div class="like">
+                  <div class="like js-like" data-like-id="<?php echo htmlspecialchars($view_tweet['like_id']); ?>">
                     <?php
                     if (isset($view_tweet['like_id'])) {
                       // いいね！している場合、青のハートを表示
-                        echo '<img src="' . HOME_URL . 'Views/img/icon-heart-twitterblue.svg" alt="">';
+                      echo '<img src="' . HOME_URL . 'Views/img/icon-heart-twitterblue.svg" alt="">';
                     } else {
                       // いいね！していない場合、グレーのハートを表示
-                        echo '<img src="' . HOME_URL . 'Views/img/icon-heart.svg" alt="">';
+                      echo '<img src="' . HOME_URL . 'Views/img/icon-heart.svg" alt="">';
                     }
                     ?>
-                    
+
                   </div>
-                  <div class="like-count"><?php echo htmlspecialchars($view_tweet['like_count']); ?></div>
+                  <div class="like-count js-like-count"><?php echo htmlspecialchars($view_tweet['like_count']); ?></div>
                 </div>
               </div>
             </div>
           <?php endforeach; ?>
-          </div>
-          <?php endif; ?>
-      </div>
+        </div>
+      <?php endif; ?>
     </div>
+  </div>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      $('.js-popover').popover();
+    }, false);
+  </script>
 </body>
 
 </html>
