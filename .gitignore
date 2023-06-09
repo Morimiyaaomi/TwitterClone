@@ -2,5 +2,7 @@
 .DS_Store
 Thumbs.db
 
+# ダンプファイル
+/twitter_clone_backup.sql
 /twitter_clone_testdata.sql
 
