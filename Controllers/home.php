@@ -19,8 +19,10 @@ if (!$user) {
   exit;
 }
 
-// 画面表示
+// 表示用の変数
 $view_user = $user;
 // ツイート一覧
 $view_tweets = findTweets($user);
+
+// 画面表示
 include_once '../Views/home.php';
